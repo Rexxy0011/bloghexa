@@ -7,26 +7,17 @@ import blogRouter from "./routes/BlogRoutes.js";
 
 const app = express();
 
-// Connect to database
-const startServer = async () => {
-  await connectDB();
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-  // Middlewares
-  app.use(cors());
-  app.use(express.json());
+// Routes
+app.get("/", (req, res) => res.send("✅ API is Working on Vercel"));
+app.use("/api/admin", adminRouter);
+app.use("/api/blog", blogRouter);
 
-  // Routes
-  app.get("/", (req, res) => res.send("API is Working"));
-  app.use("/api/admin", adminRouter);
-  app.use("/api/blog", blogRouter);
+// Connect DB before export
+await connectDB();
 
-  const PORT = process.env.PORT || 8080;
-
-  app.listen(PORT, () => {
-    console.log("✅ Server is running on port " + PORT);
-  });
-};
-
-startServer();
-
+// ✅ Export instead of listen (Vercel handles this automatically)
 export default app;
